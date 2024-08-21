@@ -56,6 +56,6 @@ function getClientsInRooms() {
     return result;
 }
 
-server.listen(80, () => {
-    console.log('Server is listening on http://localhost:80');
+server.listen(3000, () => {
+    console.log('Server is listening on PORT 443');
 });
