@@ -2,6 +2,18 @@ const WebSocket = require('ws');
 const http = require('http');
 
 const server = http.createServer((req, res) => {
+    // Add CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow methods
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow headers
+
+    // Respond to preflight requests
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('WebSocket server is running\n');
 });
@@ -40,7 +52,7 @@ wss.on('connection', (ws) => {
 
 function broadcast(room, message) {
     console.log(room);
-    
+
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN && clients.get(client) === room) {
             client.send(message);
