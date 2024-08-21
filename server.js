@@ -2,12 +2,10 @@ const WebSocket = require('ws');
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-    // Add CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow headers
+    res.setHeader('Access-Control-Allow-Origin', '*'); 
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); 
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); 
 
-    // Respond to preflight requests
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
@@ -21,19 +19,16 @@ const server = http.createServer((req, res) => {
 const wss = new WebSocket.Server({ server });
 const clients = new Map();
 
-// Handle WebSocket connections
 wss.on('connection', (ws) => {
     console.log('New client connected');
 
     clients.set(ws, null);
 
-    // Handle incoming messages
     ws.on('message', (message) => {
         const { action, room, data } = JSON.parse(message);
 
         if (action === 'join') {
             clients.set(ws, room);
-            ws.send(`Joined room: ${room}`);
             console.log('Clients:', getClientsInRooms());
         } else if (action === 'leave') {
             clients.set(ws, null);
@@ -43,7 +38,6 @@ wss.on('connection', (ws) => {
         }
     });
 
-    // Handle client disconnection
     ws.on('close', () => {
         console.log('Client disconnected');
         clients.delete(ws);
@@ -51,8 +45,7 @@ wss.on('connection', (ws) => {
 });
 
 function broadcast(room, message) {
-    console.log(room);
-
+    console.log(message);
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN && clients.get(client) === room) {
             client.send(message);
@@ -69,5 +62,5 @@ function getClientsInRooms() {
 }
 
 server.listen(3000, () => {
-    console.log('Server is listening on PORT 443');
+    console.log('Server is listening on PORT 3000');
 });
